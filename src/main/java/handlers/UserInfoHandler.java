@@ -11,8 +11,8 @@ import java.net.URI;
 //@SuppressWarnings("restriction")
 public class UserInfoHandler implements HttpHandler {
 
-    private static final String F_NAME = "fname";
-    private static final String L_NAME = "lname";
+    private static final String USER_ID = "fname";
+    //private static final String L_NAME = "lname";
 
     private static final int PARAM_NAME_IDX = 0;
     private static final int PARAM_VALUE_IDX = 1;
