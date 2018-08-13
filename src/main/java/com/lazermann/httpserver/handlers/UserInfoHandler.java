@@ -1,19 +1,20 @@
 package com.lazermann.httpserver.handlers;
 
 import com.google.gson.Gson;
+import com.lazermann.httpserver.model.UserResult;
+import com.lazermann.httpserver.storage.HazelcastStorage;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.lazermann.httpserver.model.UserResult;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.lazermann.httpserver.Constants.HTTP_OK_STATUS;
+import static com.lazermann.httpserver.Constants.RESULTS_LIST;
 
 
 //@SuppressWarnings("restriction")
@@ -23,12 +24,14 @@ public class UserInfoHandler implements HttpHandler {
 
     private List<UserResult> testResponse()
     {
-        List<UserResult> a = new ArrayList<UserResult>();
+
+       /* List<UserResult> a = new ArrayList<UserResult>();
 
         a.add(new UserResult(1,2,3));
-        a.add(new UserResult(4,5,6));
+        a.add(new UserResult(4,5,6));*/
 
-        return a;
+
+        return HazelcastStorage.getInstance().getList(RESULTS_LIST);
     }
 
     public void handle(HttpExchange t) throws IOException {

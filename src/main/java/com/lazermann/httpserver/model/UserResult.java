@@ -1,7 +1,9 @@
 package com.lazermann.httpserver.model;
 
 
-public class UserResult
+import java.io.Serializable;
+
+public class UserResult implements Serializable
 {
     private long userId;
     private long levelId;
