@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.util.List;
 
@@ -28,22 +27,10 @@ public class UserInfoHandler extends AbstractHttpHandler implements HttpHandler
 
     public void handle(HttpExchange t) throws IOException {
 
-
-        URI uri = t.getRequestURI();
-        validateRequest(t);
-
-            String response = createResponseFromQueryParams(uri);
-            logger.info("Response: " + response);
-            //Set the response header status and length
-            t.getResponseHeaders().add("Content-Type", "application/json");
-            t.sendResponseHeaders(HTTP_OK_STATUS, response.getBytes().length);
-
-            logger.debug("t = " + t);
-
-            //Write the response string
-            OutputStream os = t.getResponseBody();
-            os.write(response.getBytes());
-            os.close();
+        if(validateRequest(t))
+        {
+            writeResponse(t);
+        }
 
     }
 
@@ -84,7 +71,10 @@ public class UserInfoHandler extends AbstractHttpHandler implements HttpHandler
     }
 
     @Override
-    public String createResponseFromQueryParams(URI uri) {
-        return null;
+    public String createResponseFromQueryParams(URI uri)
+    {
+        String userId = uri.getPath().replace(URI_USERINFO, "");
+        List<UserResult> res = resultRepository.getUserInfo(userId);
+        return gson.toJson(res);
     }
 }

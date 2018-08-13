@@ -19,7 +19,6 @@ public class SetInfoHandler extends AbstractHttpHandler implements HttpHandler
 {
     Logger logger = LoggerFactory.getLogger(SetInfoHandler.class);
 
-    private int i;
     private void testResponse()
     {
         List<UserResult> res = HazelcastStorage.getInstance().getList(RESULTS_LIST);
@@ -31,13 +30,18 @@ public class SetInfoHandler extends AbstractHttpHandler implements HttpHandler
     //todo Должны выводиться и храниться только топ результаты. -- means that we need to implement "LRU cache"
     public void handle(HttpExchange t) throws IOException {
 
-        validateRequest(t);
-        testResponse();
+        if(validateRequest(t))
+        {
+            writeResponse(t);
+        }
     }
 
     @Override
-    public String createResponseFromQueryParams(URI uri) {
-        return null;
+    public String createResponseFromQueryParams(URI uri)
+    {
+        UserResult res = gson.fromJson(uri.getPath().replace(URI_SETINFO, ""), UserResult.class);
+        resultRepository.saveUserResult(res);
+        return ""; //todo!
     }
 
     @Override
@@ -56,9 +60,6 @@ public class SetInfoHandler extends AbstractHttpHandler implements HttpHandler
         try
         {
             UserResult res =   gson.fromJson(t.getRequestURI().getPath().replace(URI_SETINFO, ""), UserResult.class);
-
-
-
             return true;
         }
         catch (JsonSyntaxException e)
@@ -66,8 +67,5 @@ public class SetInfoHandler extends AbstractHttpHandler implements HttpHandler
             writeErrorMessage(t, "Cannot parse result info");
             return false;
         }
-
-
-
     }
 }

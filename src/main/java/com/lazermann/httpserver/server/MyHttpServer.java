@@ -14,7 +14,8 @@ public class MyHttpServer
 {
     public static void main(String[] args) throws Exception {
 
-        HazelcastStorage.getInstance(); //todo remove!
+        HazelcastStorage.init();
+        HazelcastStorage.addTestData();
 
         HttpServer server = HttpServer.create();
         server.bind(new InetSocketAddress(8765), 0);
