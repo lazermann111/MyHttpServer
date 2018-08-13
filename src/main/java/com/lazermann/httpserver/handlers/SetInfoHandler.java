@@ -1,36 +1,73 @@
 package com.lazermann.httpserver.handlers;
 
+import com.google.gson.JsonSyntaxException;
 import com.lazermann.httpserver.model.UserResult;
 import com.lazermann.httpserver.storage.HazelcastStorage;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 
-import static com.lazermann.httpserver.Constants.RESULTS_LIST;
+import static com.lazermann.httpserver.Constants.*;
 
 
-public class SetInfoHandler implements HttpHandler
+public class SetInfoHandler extends AbstractHttpHandler implements HttpHandler
 {
+    Logger logger = LoggerFactory.getLogger(SetInfoHandler.class);
 
     private int i;
     private void testResponse()
     {
-        /*Map<String,UserResult> res2 = HazelcastStorage.getInstance().getMap(RESULTS_LIST);
-        res2.put("a", new UserResult(1,2 + i,3 + i));*/
-
         List<UserResult> res = HazelcastStorage.getInstance().getList(RESULTS_LIST);
-        res.add(new UserResult(1,2 + i,3 + i));
-        res.add(new UserResult(1,1 + i,30+ i));
-        res.add(new UserResult(1,3 + i,50+ i));
 
-        i++;
-        res.add(new UserResult(4,5+ i,6+ i));
 
     }
-    public void handle(HttpExchange httpExchange) throws IOException {
 
+
+    //todo Должны выводиться и храниться только топ результаты. -- means that we need to implement "LRU cache"
+    public void handle(HttpExchange t) throws IOException {
+
+        validateRequest(t);
         testResponse();
+    }
+
+    @Override
+    public String createResponseFromQueryParams(URI uri) {
+        return null;
+    }
+
+    @Override
+    public boolean validateRequest(HttpExchange t) throws IOException
+    {
+        if(!t.getRequestMethod().equals(METHOD_PUT))
+        {
+            writeErrorMessage(t, "Wrong request method :" + t.getRequestMethod());
+            return false;
+        }
+        if(t.getRequestURI().getPath().replace(URI_SETINFO, "").isEmpty())
+        {
+            writeErrorMessage(t, "Empty result info");
+            return false;
+        }
+        try
+        {
+            UserResult res =   gson.fromJson(t.getRequestURI().getPath().replace(URI_SETINFO, ""), UserResult.class);
+
+
+
+            return true;
+        }
+        catch (JsonSyntaxException e)
+        {
+            writeErrorMessage(t, "Cannot parse result info");
+            return false;
+        }
+
+
+
     }
 }
