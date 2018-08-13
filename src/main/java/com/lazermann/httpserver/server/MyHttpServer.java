@@ -1,11 +1,11 @@
-package server;
+package com.lazermann.httpserver.server;
 
 
 import com.sun.net.httpserver.HttpContext;
 import com.sun.net.httpserver.HttpServer;
-import handlers.LevelInfoHandler;
-import handlers.SetInfoHandler;
-import handlers.UserInfoHandler;
+import com.lazermann.httpserver.handlers.LevelInfoHandler;
+import com.lazermann.httpserver.handlers.SetInfoHandler;
+import com.lazermann.httpserver.handlers.UserInfoHandler;
 
 import java.net.InetSocketAddress;
 
