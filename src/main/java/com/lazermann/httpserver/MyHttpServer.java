@@ -31,7 +31,7 @@ public class MyHttpServer
         server.createContext("/setinfo/", new SetInfoHandler());
 
 
-        server.setExecutor(null);// todo how it works??
+        server.setExecutor(null);
         server.start();
     }
 }

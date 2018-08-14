@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 
 import static com.lazermann.httpserver.Constants.*;
@@ -71,10 +72,16 @@ public class UserInfoHandler extends AbstractHttpHandler implements HttpHandler
     }
 
     @Override
-    public String buildResponse(URI uri)
+    public String buildResponse(HttpExchange t)
     {
-        String userId = getParameterValue(uri, USER_ID);
-        List<UserResult> res = resultRepository.getTopUserInfo(userId);
+        String userId = getParameterValue(t.getRequestURI(), USER_ID);
+        Collection<UserResult> res = resultRepository.getTopUserInfo(userId);
         return gson.toJson(res);
+    }
+
+    @Override
+    protected String getContentType()
+    {
+        return "application/json";
     }
 }

@@ -17,7 +17,7 @@ import static com.lazermann.httpserver.Constants.*;
 public abstract class AbstractHttpHandler
 {
     private Logger logger = LoggerFactory.getLogger(LevelInfoHandler.class);
-    protected UserResultRepository resultRepository = new UserResultRepositoryImpl(); //todo
+    protected UserResultRepository resultRepository = new UserResultRepositoryImpl();
     protected static Gson gson = new Gson();
 
     protected void writeErrorMessage(HttpExchange t, String message) throws IOException
@@ -31,9 +31,9 @@ public abstract class AbstractHttpHandler
 
     protected void writeResponse(HttpExchange t ) throws IOException
     {
-        String response = buildResponse(t.getRequestURI());
+        String response = buildResponse(t);
         logger.debug("Response is: " + response);
-        t.getResponseHeaders().add("Content-Type", "application/json");
+        t.getResponseHeaders().add("Content-Type", getContentType());
         t.sendResponseHeaders(HTTP_OK_STATUS, response.getBytes().length);
 
         OutputStream os = t.getResponseBody();
@@ -42,14 +42,15 @@ public abstract class AbstractHttpHandler
     }
 
     protected abstract boolean validateRequest(HttpExchange t) throws IOException;
+    protected abstract String getContentType();
 
     /**
      * Creates the response
      *
-     * @param uri the uri
+     * @param exchange
      * @return response as string
      */
-    protected abstract String buildResponse(URI uri);
+    protected abstract String buildResponse(HttpExchange exchange);
 
 
     /**

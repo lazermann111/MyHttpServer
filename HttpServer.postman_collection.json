@@ -1,0 +1,136 @@
+{
+	"info": {
+		"_postman_id": "551322c6-e099-454b-8ed0-ccfa1dc205c4",
+		"name": "HttpServer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "http://localhost:8765/levelinfo/?level_id=1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "key",
+							"value": "kbndf74GH6&$fg$#%YH",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "action",
+							"value": "getEmails",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "e3a1lsky.66bns@commonplaceblog.com",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8765/levelinfo/?level_id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8765",
+					"path": [
+						"levelinfo",
+						""
+					],
+					"query": [
+						{
+							"key": "level_id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8765/userinfo/?user_id=1",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "key",
+							"value": "kbndf74GH6&$fg$#%YH",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "action",
+							"value": "getEmails",
+							"description": "",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "e3a1lsky.66bns@commonplaceblog.com",
+							"description": "",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8765/userinfo/?user_id=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8765",
+					"path": [
+						"userinfo",
+						""
+					],
+					"query": [
+						{
+							"key": "user_id",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8765/setinfo/",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"userId\":\"1\",\n\t\"levelId\":\"2\",\n\t\"result\":5\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8765/setinfo/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8765",
+					"path": [
+						"setinfo",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

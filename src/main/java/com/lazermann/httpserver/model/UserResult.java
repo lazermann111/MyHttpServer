@@ -3,7 +3,7 @@ package com.lazermann.httpserver.model;
 
 import java.io.Serializable;
 
-public class UserResult implements Serializable
+public class UserResult implements Serializable, Comparable<UserResult>
 {
     private String userId;
     private String levelId;
@@ -38,5 +38,10 @@ public class UserResult implements Serializable
 
     public void setResult(long result) {
         this.result = result;
+    }
+
+    @Override
+    public int compareTo(UserResult r) {
+        return this.getResult() < r.getResult() ? 1 : -1;
     }
 }

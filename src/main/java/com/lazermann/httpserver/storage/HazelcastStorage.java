@@ -4,11 +4,14 @@ package com.lazermann.httpserver.storage;
 import com.hazelcast.config.Config;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.lazermann.httpserver.model.TopResults;
 import com.lazermann.httpserver.model.UserResult;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import static com.lazermann.httpserver.Constants.RESULTS_LIST;
+import static com.lazermann.httpserver.Constants.LEVEL_MAP;
+import static com.lazermann.httpserver.Constants.USERS_MAP;
 
 public class HazelcastStorage
 {
@@ -32,12 +35,32 @@ public class HazelcastStorage
 
     public static void addTestData()
     {
-        List<UserResult> res = HazelcastStorage.getInstance().getList(RESULTS_LIST);
+        Map<String,TopResults> usersMap = HazelcastStorage.getInstance().getReplicatedMap(USERS_MAP);
+
+
+
+        Map<String,TopResults> levelsMap = HazelcastStorage.getInstance().getReplicatedMap(LEVEL_MAP);
+
+        Map<String,UserResult> levelsMap3 = HazelcastStorage.getInstance().getMap("SSDSD");
+
+        Map<String,TopResults> levelsMap2= new HashMap<>();
+
         for (int i = 0; i < 30; i++)
         {
             for (int j = 0; j < 30; j++)
             {
-                res.add(new UserResult(i+"",j+"", i*j));
+                UserResult result =  new UserResult(i+"",j+"", i*j);
+                usersMap.computeIfAbsent(result.getUserId(), k -> new TopResults());
+                usersMap.get(result.getUserId()).addNewResult(result);
+
+                levelsMap.computeIfAbsent(result.getLevelId(), k -> new TopResults());
+                levelsMap.get(result.getLevelId()).addNewResult(result);
+
+                levelsMap2.putIfAbsent(result.getLevelId(), new TopResults());
+                levelsMap2.get(result.getLevelId()).addNewResult(result);
+
+
+                levelsMap3.put(result.getLevelId(), result);
             }
         }
     }

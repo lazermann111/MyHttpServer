@@ -8,10 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URI;
+import java.io.InputStreamReader;
 import java.util.List;
 
-import static com.lazermann.httpserver.Constants.*;
+import static com.lazermann.httpserver.Constants.METHOD_PUT;
+import static com.lazermann.httpserver.Constants.RESULTS_LIST;
 
 
 public class SetInfoHandler extends AbstractHttpHandler implements HttpHandler
@@ -26,7 +27,7 @@ public class SetInfoHandler extends AbstractHttpHandler implements HttpHandler
     }
 
 
-    //todo Должны выводиться и храниться только топ результаты. -- means that we need to implement "LRU cache"
+
     public void handle(HttpExchange t) throws IOException {
 
         if(validateRequest(t))
@@ -36,11 +37,25 @@ public class SetInfoHandler extends AbstractHttpHandler implements HttpHandler
     }
 
     @Override
-    public String buildResponse(URI uri)
+    public String buildResponse(HttpExchange t)
     {
-        UserResult res = gson.fromJson(uri.getQuery().replace(URI_SETINFO, ""), UserResult.class);
+        StringBuilder body = new StringBuilder();
+        try (InputStreamReader reader = new InputStreamReader(t.getRequestBody())) {
+            char[] buffer = new char[256];
+            int read;
+            while ((read = reader.read(buffer)) != -1) {
+                body.append(buffer, 0, read);
+            }
+        }
+        catch (IOException e)
+        {
+          return "Cannot read request body";
+        }
+
+
+        UserResult res = gson.fromJson(body.toString(), UserResult.class);
         resultRepository.saveUserResult(res);
-        return ""; //todo!
+        return "Result added successfully ";
     }
 
     @Override
@@ -51,11 +66,17 @@ public class SetInfoHandler extends AbstractHttpHandler implements HttpHandler
             writeErrorMessage(t, "Wrong request method :" + t.getRequestMethod());
             return false;
         }
-        if(t.getRequestURI().getQuery() == null || t.getRequestURI().getQuery().isEmpty())
+        if(t.getRequestBody() == null)
         {
             writeErrorMessage(t, "Empty result info");
             return false;
         }
         return true;
+    }
+
+    @Override
+    protected String getContentType()
+    {
+        return "text/html";
     }
 }

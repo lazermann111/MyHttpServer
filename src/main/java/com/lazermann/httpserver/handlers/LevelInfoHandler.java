@@ -8,10 +8,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.URI;
-import java.util.List;
+import java.util.Collection;
 
-import static com.lazermann.httpserver.Constants.*;
+import static com.lazermann.httpserver.Constants.LEVEL_ID;
+import static com.lazermann.httpserver.Constants.METHOD_GET;
 
 public class LevelInfoHandler extends AbstractHttpHandler implements HttpHandler
 {
@@ -46,10 +46,16 @@ public class LevelInfoHandler extends AbstractHttpHandler implements HttpHandler
     }
 
     @Override
-    public String buildResponse(URI uri)
+    protected String getContentType()
     {
-       String levelId = getParameterValue(uri, LEVEL_ID);
-       List<UserResult> res = resultRepository.getTopLevelInfo(levelId);
+        return "application/json";
+    }
+
+    @Override
+    public String buildResponse(HttpExchange t)
+    {
+       String levelId = getParameterValue(t.getRequestURI(), LEVEL_ID);
+       Collection<UserResult> res = resultRepository.getTopLevelInfo(levelId);
        return gson.toJson(res);
     }
 }
