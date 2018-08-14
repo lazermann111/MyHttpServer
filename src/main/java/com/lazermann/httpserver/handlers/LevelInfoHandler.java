@@ -11,8 +11,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
-import static com.lazermann.httpserver.Constants.METHOD_GET;
-import static com.lazermann.httpserver.Constants.URI_LEVELINFO;
+import static com.lazermann.httpserver.Constants.*;
 
 public class LevelInfoHandler extends AbstractHttpHandler implements HttpHandler
 {
@@ -37,7 +36,7 @@ public class LevelInfoHandler extends AbstractHttpHandler implements HttpHandler
             writeErrorMessage(t, "Wrong request method :" + t.getRequestMethod());
             return false;
         }
-        if(t.getRequestURI().getPath().replace(URI_LEVELINFO, "").isEmpty())
+        if(t.getRequestURI().getQuery() == null || t.getRequestURI().getQuery().isEmpty())
         {
             writeErrorMessage(t, "Empty level id");
             return false;
@@ -47,10 +46,10 @@ public class LevelInfoHandler extends AbstractHttpHandler implements HttpHandler
     }
 
     @Override
-    public String createResponseFromQueryParams(URI uri)
+    public String buildResponse(URI uri)
     {
-       String levelId = uri.getPath().replace(URI_LEVELINFO, "");
-       List<UserResult> res = resultRepository.getLevelInfo(levelId);
+       String levelId = getParameterValue(uri, LEVEL_ID);
+       List<UserResult> res = resultRepository.getTopLevelInfo(levelId);
        return gson.toJson(res);
     }
 }

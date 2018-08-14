@@ -1,6 +1,5 @@
 package com.lazermann.httpserver.handlers;
 
-import com.google.gson.JsonSyntaxException;
 import com.lazermann.httpserver.model.UserResult;
 import com.lazermann.httpserver.storage.HazelcastStorage;
 import com.sun.net.httpserver.HttpExchange;
@@ -37,9 +36,9 @@ public class SetInfoHandler extends AbstractHttpHandler implements HttpHandler
     }
 
     @Override
-    public String createResponseFromQueryParams(URI uri)
+    public String buildResponse(URI uri)
     {
-        UserResult res = gson.fromJson(uri.getPath().replace(URI_SETINFO, ""), UserResult.class);
+        UserResult res = gson.fromJson(uri.getQuery().replace(URI_SETINFO, ""), UserResult.class);
         resultRepository.saveUserResult(res);
         return ""; //todo!
     }
@@ -52,20 +51,11 @@ public class SetInfoHandler extends AbstractHttpHandler implements HttpHandler
             writeErrorMessage(t, "Wrong request method :" + t.getRequestMethod());
             return false;
         }
-        if(t.getRequestURI().getPath().replace(URI_SETINFO, "").isEmpty())
+        if(t.getRequestURI().getQuery() == null || t.getRequestURI().getQuery().isEmpty())
         {
             writeErrorMessage(t, "Empty result info");
             return false;
         }
-        try
-        {
-            UserResult res =   gson.fromJson(t.getRequestURI().getPath().replace(URI_SETINFO, ""), UserResult.class);
-            return true;
-        }
-        catch (JsonSyntaxException e)
-        {
-            writeErrorMessage(t, "Cannot parse result info");
-            return false;
-        }
+        return true;
     }
 }

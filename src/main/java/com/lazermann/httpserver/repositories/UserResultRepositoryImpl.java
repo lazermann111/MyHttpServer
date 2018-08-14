@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.lazermann.httpserver.Constants.RESULTS_LIST;
+import static com.lazermann.httpserver.Constants.RESULTS_SIZE;
 
 public class UserResultRepositoryImpl implements UserResultRepository
 {
@@ -19,28 +20,28 @@ public class UserResultRepositoryImpl implements UserResultRepository
 
 
     @Override
-    public List<UserResult> getUserInfo(String userId) {
+    public List<UserResult> getTopUserInfo(String userId) {
         List<UserResult> res = HazelcastStorage.getInstance().getList(RESULTS_LIST);
 
         return res.stream().filter(a -> a.getUserId().equals(userId)).sorted(new Comparator<UserResult>() {
             @Override
             public int compare(UserResult userResult, UserResult t1) {
-                return userResult.getResult() >= t1.getResult() ? 1 : -1;
+                return userResult.getResult() < t1.getResult() ? 1 : -1;
             }
-        }).limit(20).collect(Collectors.toList());
+        }).limit(RESULTS_SIZE).collect(Collectors.toList());
     }
 
     @Override
-    public List<UserResult> getLevelInfo(String levelId)
+    public List<UserResult> getTopLevelInfo(String levelId)
     {
         List<UserResult> res = HazelcastStorage.getInstance().getList(RESULTS_LIST);
 
         return res.stream().filter(a -> a.getLevelId().equals(levelId)).sorted(new Comparator<UserResult>() {
             @Override
             public int compare(UserResult userResult, UserResult t1) {
-                return userResult.getResult() >= t1.getResult() ? 1 : -1;
+                return userResult.getResult() < t1.getResult() ? 1 : -1;
             }
-        }).limit(20).collect(Collectors.toList());
+        }).limit(RESULTS_SIZE).collect(Collectors.toList());
     }
 
     @Override

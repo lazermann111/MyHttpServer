@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface UserResultRepository
 {
-     List<UserResult> getUserInfo(String userId);
-     List<UserResult> getLevelInfo(String levelId);
+     List<UserResult> getTopUserInfo(String userId);
+     List<UserResult> getTopLevelInfo(String levelId);
      void saveUserResult(UserResult result);
 }

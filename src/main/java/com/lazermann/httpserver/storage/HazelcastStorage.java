@@ -37,7 +37,7 @@ public class HazelcastStorage
         {
             for (int j = 0; j < 30; j++)
             {
-                res.add(new UserResult(i+"",j+"", i+j));
+                res.add(new UserResult(i+"",j+"", i*j));
             }
         }
     }

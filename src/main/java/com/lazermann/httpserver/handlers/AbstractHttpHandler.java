@@ -12,30 +12,27 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 
-import static com.lazermann.httpserver.Constants.HTTP_OK_STATUS;
+import static com.lazermann.httpserver.Constants.*;
 
 public abstract class AbstractHttpHandler
 {
-    Logger logger = LoggerFactory.getLogger(LevelInfoHandler.class);
-
-
+    private Logger logger = LoggerFactory.getLogger(LevelInfoHandler.class);
     protected UserResultRepository resultRepository = new UserResultRepositoryImpl(); //todo
-
     protected static Gson gson = new Gson();
 
     protected void writeErrorMessage(HttpExchange t, String message) throws IOException
     {
-
         logger.error(message);
         OutputStream os = t.getResponseBody();
+        t.sendResponseHeaders(HTTP_INTERNAL_SERVER_ERROR, message.getBytes().length);
         os.write(message.getBytes());
         os.close();
     }
 
     protected void writeResponse(HttpExchange t ) throws IOException
     {
-
-        String response = createResponseFromQueryParams(t.getRequestURI());
+        String response = buildResponse(t.getRequestURI());
+        logger.debug("Response is: " + response);
         t.getResponseHeaders().add("Content-Type", "application/json");
         t.sendResponseHeaders(HTTP_OK_STATUS, response.getBytes().length);
 
@@ -47,11 +44,45 @@ public abstract class AbstractHttpHandler
     protected abstract boolean validateRequest(HttpExchange t) throws IOException;
 
     /**
-     * Creates the response from query params.
+     * Creates the response
      *
      * @param uri the uri
      * @return response as string
      */
-    protected abstract String createResponseFromQueryParams(URI uri);
+    protected abstract String buildResponse(URI uri);
 
+
+    /**
+     * Creates the response
+     *
+     * @param uri the uri
+     * @param paramName parameter name
+     * @return parameter value
+     */
+    protected String getParameterValue (URI uri, String paramName)
+    {
+        String query = uri.getQuery();
+        if (query != null)
+        {
+            String[] queryParams = query.split(AND_DELIMITER);
+            if (queryParams.length > 0)
+            {
+
+                for (String qParam : queryParams)
+                {
+                    String[] param = qParam.split(EQUAL_DELIMITER);
+                    if (param.length > 0)
+                    {
+                        for (int i = 0; i < param.length; i++)
+                        {
+                            if (paramName.equalsIgnoreCase(param[i])) {
+                                return param[i+1];
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -61,7 +61,7 @@ public class UserInfoHandler extends AbstractHttpHandler implements HttpHandler
             writeErrorMessage(t, "Wrong request method :" + t.getRequestMethod());
             return false;
         }
-        if(t.getRequestURI().getPath().replace(URI_USERINFO, "").isEmpty())
+        if(t.getRequestURI().getQuery() == null || t.getRequestURI().getQuery().isEmpty())
         {
             writeErrorMessage(t, "Empty user id");
             return false;
@@ -71,10 +71,10 @@ public class UserInfoHandler extends AbstractHttpHandler implements HttpHandler
     }
 
     @Override
-    public String createResponseFromQueryParams(URI uri)
+    public String buildResponse(URI uri)
     {
-        String userId = uri.getPath().replace(URI_USERINFO, "");
-        List<UserResult> res = resultRepository.getUserInfo(userId);
+        String userId = getParameterValue(uri, USER_ID);
+        List<UserResult> res = resultRepository.getTopUserInfo(userId);
         return gson.toJson(res);
     }
 }
