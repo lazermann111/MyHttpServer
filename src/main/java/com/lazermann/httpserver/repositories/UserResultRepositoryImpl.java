@@ -5,6 +5,7 @@ import com.lazermann.httpserver.model.TopResults;
 import com.lazermann.httpserver.model.UserResult;
 import com.lazermann.httpserver.storage.HazelcastStorage;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -17,14 +18,14 @@ public class UserResultRepositoryImpl implements UserResultRepository
     public Collection<UserResult> getTopUserInfo(String userId) {
 
         Map<String,TopResults> res = HazelcastStorage.getInstance().getReplicatedMap(USERS_MAP);
-        return res.get(userId).getResults();
+        return res.get(userId) != null ? res.get(userId).getResults() : new ArrayList<>();
     }
 
     @Override
     public Collection<UserResult> getTopLevelInfo(String levelId)
     {
         Map<String,TopResults> res = HazelcastStorage.getInstance().getReplicatedMap(LEVEL_MAP);
-        return res.get(levelId).getResults();
+        return res.get(levelId) != null ? res.get(levelId).getResults() : new ArrayList<>();
     }
 
     @Override

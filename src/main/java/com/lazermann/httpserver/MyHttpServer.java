@@ -10,6 +10,10 @@ import com.sun.net.httpserver.HttpServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 
+import static com.lazermann.httpserver.Constants.URI_LEVELINFO;
+import static com.lazermann.httpserver.Constants.URI_SETINFO;
+import static com.lazermann.httpserver.Constants.URI_USERINFO;
+
 public class MyHttpServer
 {
     public static void main(String[] args) throws Exception
@@ -25,9 +29,9 @@ public class MyHttpServer
         HttpServer server = HttpServer.create();
         server.bind(new InetSocketAddress(8765), 0);
 
-        server.createContext("/userinfo/", new UserInfoHandler());
-        server.createContext("/levelinfo/", new LevelInfoHandler());
-        server.createContext("/setinfo/", new SetInfoHandler());
+        server.createContext(URI_USERINFO, new UserInfoHandler());
+        server.createContext(URI_LEVELINFO, new LevelInfoHandler());
+        server.createContext(URI_SETINFO, new SetInfoHandler());
 
 
         server.setExecutor(null);
