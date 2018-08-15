@@ -10,7 +10,8 @@ public class UserResult implements Serializable, Comparable<UserResult>
     private long result;
 
 
-    public UserResult(String userId, String levelId, long result) {
+    public UserResult(String userId, String levelId, long result)
+    {
         this.userId = userId;
         this.levelId = levelId;
         this.result = result;
